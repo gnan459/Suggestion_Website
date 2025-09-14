@@ -16,7 +16,7 @@ app.add_middleware(
 df = pd.read_excel("seniors_data_cleaned.xlsx")
 df = df.replace({np.nan: None})
 DATA = df.to_dict(orient="records")
-print(DATA[10])
+
 
 async def matches(item, key, val):
     if val is None or val == "":
@@ -42,15 +42,15 @@ async def list_seniors(
             r for r in rows
             if any(
                 (str(r.get(k, "")).lower().find(ql) != -1)
-                for k in ["Name of the student", "Name of organization", "B.Tech./M.Tech./MCA", "Roll No."]
+                for k in ["Name of the student", "Name of organization", "B.Tech./M. Tech./MCA", "Roll No."]
             )
         ]
     # exact-ish filters
     if degree:
-        rows = [r for r in rows if str(r.get("B.Tech./M.Tech./MCA", "")).lower() == degree.lower()]
+        rows = [r for r in rows if str(r.get("B.Tech./M. Tech./MCA", "")).lower() == degree.lower()]
     
     if campus_type:
-        rows = [r for r in rows if str(r.get("On campus", "")) == campus_type or str(r.get("Off campus", "")) == campus_type]
+        rows = [r for r in rows  if str(r.get("On campus", "")) == campus_type or str(r.get("Off campus", "")) == campus_type]
     if org:
         rows = [r for r in rows if str(r.get("Name of organization", "")).lower() == org.lower()]
 
