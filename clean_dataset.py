@@ -18,8 +18,8 @@ df = df[df.count(axis=1) > 1]
 df['Roll No.'] = df['Roll No.'].apply(lambda x: str(int(x)) if pd.notnull(x) and isinstance(x, float) else str(x))
 
 # Save the cleaned file
-df.to_excel("seniors_data_cleaned.xlsx", index=False)
-print("Cleaned file saved as seniors_data_cleaned.xlsx")
+df.to_excel("seniors_data_cleaned_2020-2023.xlsx", index=False)
+print("Cleaned file saved as seniors_data_cleaned_2020-2023.xlsx")
 
 
 

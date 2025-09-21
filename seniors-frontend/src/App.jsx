@@ -49,6 +49,40 @@ function App() {
     setLoading(false);
   };
 
+  const connect = async () => {
+  if (!selected) return;
+  
+  try {
+    // Call your backend proxy instead
+    const response = await axios.post(`${API_BASE}/proxy/linkedin-search`, {
+      name: selected["Name of the student"],
+      org: selected["Name of organization"]
+    });
+    
+    // Find LinkedIn URL in results
+    const organicResults = response.data.organic_results || [];
+    let linkedinUrl = null;
+    
+    // Look for LinkedIn results
+    for (const result of organicResults) {
+      if (result.link && result.link.includes('linkedin.com/in/')) {
+        linkedinUrl = result.link;
+        break;
+      }
+    }
+    
+    if (linkedinUrl) {
+      // Open the LinkedIn profile in a new tab
+      window.open(linkedinUrl, '_blank');
+    } else {
+      alert("LinkedIn profile not found. Try searching manually.");
+    }
+  } catch (error) {
+    console.error("Error connecting to LinkedIn:", error);
+    alert("Error finding LinkedIn profile. Please try again later.");
+  }
+};
+
   const fetchDetail = async (rollNo) => {
     try {
       const res = await axios.get(`${API_BASE}/seniors/${rollNo}`);
@@ -130,6 +164,7 @@ function App() {
             <p><strong>Organization:</strong> {selected["Name of organization"]}</p>
             <p><strong>Package:</strong> {selected["Package p.a. (Lakhs)"]} LPA</p>
             <p><strong>Campus:</strong> {selected["On campus"] ? "On campus" : "Off Campus"}</p>
+            <button className="connect-btn" onClick={connect}>Connect</button>
           </div>
         )}
       </div>

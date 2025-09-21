@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 from typing import Optional
 import os
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
+import requests
 
 app = FastAPI(title="Seniors API")
 
@@ -97,6 +98,31 @@ async def get_senior(roll_no: str, academic_year: Optional[str] = None):
             return r
     return {"error": "not found"}
 
+SERPAPI_KEY = "1c39940bcaa1d7713e429d091baf7536e4aa6bba9f1769c3fe53f60a78b4584a"
+
+@app.post("/proxy/linkedin-search")
+async def linkedin_search(request: Request):
+    try:
+        body = await request.json()
+        name = body.get("name")
+        org = body.get("org")
+        query = f"{name} {org} linkedin"
+        params = {
+            "q": query,
+            "api_key": SERPAPI_KEY,
+            "engine": "google",
+            "gl": "in",
+            "hl": "en"
+        }
+        response = requests.get("https://serpapi.com/search", params=params)
+        print("SerpAPI status:", response.status_code)
+        print("SerpAPI response:", response.text)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print("Proxy error:", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Update filters endpoint to support academic_year parameter
 @app.get("/filters")
 async def filters(academic_year: Optional[str] = None):
@@ -112,6 +138,7 @@ async def filters(academic_year: Optional[str] = None):
     
     deg = sorted({(str(r.get("B.Tech./M. Tech./MCA")) or "").strip() for r in data if r.get("B.Tech./M. Tech./MCA")})
     ct = ["On campus", "Off campus"]
+    
     
     return {
         "degree": deg,
