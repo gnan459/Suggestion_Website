@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Connectivity Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            try {
+                console.log('Testing API...');
+                
+                // Test filters endpoint
+                const filtersResponse = await fetch('http://127.0.0.1:8000/filters');
+                const filtersData = await filtersResponse.json();
+                console.log('Filters:', filtersData);
+                
+                // Test seniors endpoint
+                const seniorsResponse = await fetch('http://127.0.0.1:8000/seniors');
+                const seniorsData = await seniorsResponse.json();
+                console.log('Seniors:', seniorsData);
+                
+                // Test specific senior
+                if (seniorsData.results && seniorsData.results.length > 0) {
+                    const rollNo = seniorsData.results[0]['Roll No.'];
+                    const seniorResponse = await fetch(`http://127.0.0.1:8000/seniors/${rollNo}`);
+                    const seniorData = await seniorResponse.json();
+                    console.log('Senior detail:', seniorData);
+                }
+                
+                resultDiv.innerHTML = `
+                    <h3>API Test Results:</h3>
+                    <p>✅ Filters loaded: ${filtersData.degree.length} degrees</p>
+                    <p>✅ Seniors loaded: ${seniorsData.total} records</p>
+                    <p>✅ All endpoints working correctly!</p>
+                `;
+                
+            } catch (error) {
+                console.error('API Test Error:', error);
+                resultDiv.innerHTML = `
+                    <h3>API Test Results:</h3>
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Check console for details</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
