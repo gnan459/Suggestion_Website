@@ -45,3 +45,5 @@ Thumbs.db
 # Ignore cleaned dataset output
 seniors_data_cleaned.xlsx
 seniors_data.xlsx
+
+.env

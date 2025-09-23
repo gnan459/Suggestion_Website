@@ -6,6 +6,8 @@ from typing import Optional
 import os
 from fastapi import HTTPException, Request
 import requests
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(title="Seniors API")
 
@@ -98,7 +100,7 @@ async def get_senior(roll_no: str, academic_year: Optional[str] = None):
             return r
     return {"error": "not found"}
 
-SERPAPI_KEY = "1c39940bcaa1d7713e429d091baf7536e4aa6bba9f1769c3fe53f60a78b4584a"
+SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
 @app.post("/proxy/linkedin-search")
 async def linkedin_search(request: Request):
